@@ -1,0 +1,55 @@
+defaultTasks 'clean', 'test', 'aggregate'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'net.serenity-bdd.aggregator'
+
+group 'com.sophossolutions.www'
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
+buildscript{
+    repositories{
+        mavenLocal()
+        jcenter()
+    }
+    ext {
+        serenityVersion = '2.0.91'
+        serenityCucumberVersion = '3.7.1'
+    }
+    dependencies{
+        classpath("net.serenity-bdd:serenity-gradle-plugin:$rootProject.ext.serenityVersion")
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
+    implementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
+    implementation group: 'net.serenity-bdd', name: 'serenity-cucumber', version: '3.7.1'
+    implementation group: 'net.serenity-bdd', name: 'serenity-core', version: '3.7.1'
+    implementation group: 'net.serenity-bdd', name: 'serenity-junit', version: '3.7.1'
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-webdriver', version: '3.7.1'
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay', version: '3.7.1'
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-rest', version: '3.7.1'
+    implementation group: 'junit', name: 'junit', version: '4.13.2'
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.13.0'
+
+
+}
+
+test {
+    systemProperties System.getProperties()
+    systemProperty "file.encoding", "UTF-8"
+    systemProperty "cucumber.options", System.properties.getProperty("cucumber.options")
+    testLogging.showStandardStreams = true
+    finalizedBy(aggregate)
+}
